@@ -27,16 +27,21 @@ func (base *Base) BeforeCreate(tx *gorm.DB) error {
 
 // User is the model for the user table.
 type User struct {
-	Base
-	SomeFlag bool `gorm:"not null;default:true"`
+	// Base
+	gorm.Model
+	UUID     string `gorm:"size:36"`
+	SomeFlag bool   `gorm:"not null;default:true"`
 	Profile  Profile
 }
 
 // Profile is the model for the profile table.
 type Profile struct {
-	Base
-	Name   string `gorm:"size:60;not null;"`
-	UserID string `gorm:"size:36"`
+	// Base
+	gorm.Model
+	UUID string `gorm:"size:36"`
+	Name string `gorm:"size:60;not null;"`
+	// UserID string `gorm:"size:36"`
+	UserID uint
 }
 
 func main() {
@@ -48,14 +53,17 @@ func main() {
 		panic(err)
 	}
 
-	// db.AutoMigrate(&User{}, &Profile{})
+	db.AutoMigrate(&User{}, &Profile{})
 
-	user := &User{SomeFlag: false}
+	userUUID := uuid.New().String()
+	user := &User{UUID: userUUID, SomeFlag: false}
 	if db.Create(&user).Error != nil {
 		log.Panic("Unable to create user.")
 	}
 
-	profile := &Profile{Name: "Marcelo Aguero", UserID: user.Base.ID}
+	// profile := &Profile{Name: "Marcelo Aguero", UserID: user.Base.ID}
+	profileUUID := uuid.New().String()
+	profile := &Profile{Name: "Marcelo Aguero", UUID: profileUUID, UserID: user.ID}
 	if db.Create(&profile).Error != nil {
 		log.Panic("Unable to create profile.")
 	}
