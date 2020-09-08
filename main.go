@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // Base contains common columns for all tables.
 type Base struct {
-	ID        string `gorm:"primaryKey"`
+	ID        string `gorm:"size:36"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
@@ -34,12 +34,14 @@ type User struct {
 // Profile is the model for the profile table.
 type Profile struct {
 	Base
-	Name   string `gorm:"size:128;not null;"`
-	UserID string `gorm:"column:user_foreign_key;not null;"`
+	Name   string `gorm:"size:60;not null;"`
+	UserID string
 }
 
 func main() {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	dsn := "root:supersecret@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
