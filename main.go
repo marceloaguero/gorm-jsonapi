@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Base contains common columns for all tables.
@@ -35,19 +36,19 @@ type User struct {
 type Profile struct {
 	Base
 	Name   string `gorm:"size:60;not null;"`
-	UserID string
+	UserID string `gorm:"size:36"`
 }
 
 func main() {
 	dsn := "root:supersecret@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	// db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Warn),
+	})
 	if err != nil {
 		panic(err)
 	}
 
-	// db.LogMode(true)
-	db.AutoMigrate(&User{}, &Profile{})
+	// db.AutoMigrate(&User{}, &Profile{})
 
 	user := &User{SomeFlag: false}
 	if db.Create(&user).Error != nil {
