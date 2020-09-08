@@ -12,7 +12,7 @@ import (
 
 // Base contains common columns for all tables.
 type Base struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
+	ID        string `gorm:"primaryKey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
@@ -20,7 +20,7 @@ type Base struct {
 
 // BeforeCreate will set a UUID rather than numeric ID.
 func (base *Base) BeforeCreate(tx *gorm.DB) error {
-	base.ID = uuid.New()
+	base.ID = uuid.New().String()
 	return nil
 }
 
@@ -34,8 +34,8 @@ type User struct {
 // Profile is the model for the profile table.
 type Profile struct {
 	Base
-	Name   string    `gorm:"size:128;not null;"`
-	UserID uuid.UUID `gorm:"type:uuid;column:user_foreign_key;not null;"`
+	Name   string `gorm:"size:128;not null;"`
+	UserID string `gorm:"column:user_foreign_key;not null;"`
 }
 
 func main() {
