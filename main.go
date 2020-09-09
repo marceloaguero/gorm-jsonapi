@@ -38,9 +38,8 @@ type User struct {
 type Profile struct {
 	// Base
 	gorm.Model
-	UUID string `gorm:"size:36"`
-	Name string `gorm:"size:60;not null;"`
-	// UserID string `gorm:"size:36"`
+	UUID   string `gorm:"size:36"`
+	Name   string `gorm:"size:60;not null;"`
 	UserID uint
 }
 
@@ -61,7 +60,6 @@ func main() {
 		log.Panic("Unable to create user.")
 	}
 
-	// profile := &Profile{Name: "Marcelo Aguero", UserID: user.Base.ID}
 	profileUUID := uuid.New().String()
 	profile := &Profile{Name: "Marcelo Aguero", UUID: profileUUID, UserID: user.ID}
 	if db.Create(&profile).Error != nil {
